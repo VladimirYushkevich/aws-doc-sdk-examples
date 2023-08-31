@@ -35,15 +35,13 @@ public class SNSCrud {
             System.exit(1);
         }
 
-        SnsClient snsClient = SnsClient.builder()
+        try (SnsClient snsClient = SnsClient.builder()
                 .region(Region.US_WEST_2)
                 .credentialsProvider(ProfileCredentialsProvider.create("qa-dataplane"))
-                .build();
-
-        String topicArn = args[0];
-        String awsAccountId = args[1];
-        String action = args[2];
-        try {
+                .build()) {
+            String topicArn = args[0];
+            String awsAccountId = args[1];
+            String action = args[2];
             switch (action) {
                 case "GRANT":
                     grantPermissions(snsClient, topicArn, awsAccountId);
@@ -58,8 +56,6 @@ public class SNSCrud {
         } catch (SnsException e) {
             System.err.println(e.awsErrorDetails().errorMessage());
             System.exit(1);
-        } finally {
-            snsClient.close();
         }
     }
 
